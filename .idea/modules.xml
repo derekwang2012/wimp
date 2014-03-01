@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Layar Tancep 1.3.2/Projects/actionbarsherlock/actionbarsherlock.iml" filepath="$PROJECT_DIR$/../Layar Tancep 1.3.2/Projects/actionbarsherlock/actionbarsherlock.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wimp.iml" filepath="$PROJECT_DIR$/wimp.iml" />
+    </modules>
+  </component>
+</project>
+

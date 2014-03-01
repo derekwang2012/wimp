@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+    <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadeScrollbars="true"
+            android:listSelector="@drawable/list_selector_holo_light"
+            android:scrollbarThumbVertical="@drawable/fastscroll_thumb_holo"
+            android:fadingEdge="none"
+            android:divider="@android:color/background_light"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/ads"/>
+    <!-- Here is the view to show if the list is empty -->
+    <TextView android:id="@+id/emptyFavList"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:visibility="invisible"
+              android:gravity="center_horizontal"
+              android:padding="10dp"
+              android:text="@string/empty_fav_list_message" />
+    <com.google.ads.AdView
+            xmlns:googleads="http://schemas.android.com/apk/lib/com.google.ads"
+            android:id="@+id/ads"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            googleads:adSize="BANNER"
+            googleads:adUnitId="@string/admob_id"
+            android:layout_alignParentBottom="true" />
+
+
+    <Button
+            android:id="@+id/btnRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/refresh"
+            android:textSize="@dimen/content_size"
+            android:background="@drawable/btn_default_holo_light"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+
+</RelativeLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical" >
+	    <TextView 
+	        android:id="@+id/txtTitle"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:text="@string/app_name"
+	        android:textSize="@dimen/about_title_size"
+	        android:textColor="@color/title_detail_color"
+	        android:layout_marginLeft="@dimen/margin_left_right"
+	        android:layout_marginTop="@dimen/margin_top_bottom"
+	        android:layout_marginRight="@dimen/margin_left_right"
+	        android:layout_marginBottom="@dimen/margin_top_bottom"/>
+	    <TextView 
+	        android:id="@+id/txtDescription"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:text="@string/description"
+	        android:textSize="@dimen/content_size"
+		    android:textColor="@color/content_color"
+		    android:lineSpacingExtra="@dimen/spacing"
+	        android:layout_marginLeft="@dimen/about_margin"
+	        android:layout_marginRight="@dimen/about_margin"
+	        android:layout_marginBottom="@dimen/about_margin"/>
+	    <TextView 
+	        android:id="@+id/txtCopyright"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:text="@string/copyright"
+	        android:textSize="@dimen/content_size"
+	        android:autoLink="web"
+	        android:lineSpacingExtra="@dimen/spacing"
+		    android:textColor="@color/content_color"
+	        android:layout_marginLeft="@dimen/about_margin"
+	        android:layout_marginRight="@dimen/about_margin"
+	        android:layout_marginBottom="@dimen/about_margin"/>
+	</LinearLayout>
+</ScrollView>

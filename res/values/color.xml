@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="spinner_background">#d6d6d6</color>
+    <color name="title_color">#ffffff</color>
+    <color name="title_detail_color">#000000</color>
+    <color name="duration_color">#e4e4e4</color>
+    <color name="content_color">#454545</color>
+    
+</resources>

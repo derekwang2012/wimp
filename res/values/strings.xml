@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Wimp</string>
+    <string name="youtube_apikey">AIzaSyA0-N1zX3_yciuYmp5cQPTi80dJbmxs6fU</string>
+    <string name="gplay_url">market://details?id=com.video.wimp</string>
+    <string name="gplay_web_url">https://play.google.com/store/apps/details?id=com.video.wimp</string>
+    
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string-array name="add_to_favorite">
+        <item>Add to Favorite</item>
+        <item>Share</item>
+    </string-array>
+
+    <string-array name="remove_favorite">
+        <item>Remove Favorite</item>
+        <item>Share</item>
+    </string-array>
+
+    <string name="favorite_added">Favorite Added</string>
+    <string name="favorite_removed">Favorite Removed</string>
+    <string name="loading_data">loading data &#8230;.</string>
+    <string name="player">Player</string>
+    
+    <string name="refresh">Refresh</string>
+    <string name="no_connection">Connect to internet failed</string>
+    <string name="my_favorite">Favorites</string>
+	<string name="share_it">Share it</string>
+    <string name="rate_it">Rate me</string>
+    <string name="about">About</string>
+    <string name="subject">Daily best videos in one app</string>
+    <string name="message">Download daily best videos app now on Google Play:</string>
+    <string name="empty_fav_list_message"><b>No Videos</b> \n\nTo add videos to the favorite section, long press on the video, and then tap "Add to Favorite".</string>
+    
+    <string name="description">A collection of the best online videos. Updated Daily. Best videos on the Web. Suitable for all ages.</string>
+    <string name="copyright">&#169; 2014.</string>
+    <string name="share_via">Share via</string>
+    <string name="admob_id">a152f70babe153f</string>
+    
+    <string name="load_more">Load More</string>
+    <string name="no_youtube_app">Youtube App is not installed on your device. install it first before playing the video.</string>
+    <string name="update_youtube_app">Youtube App version 4.2.16 is required to play this video. please, update it first.</string>
+    <string name="install">Install</string>
+    <string name="update">Update</string>
+    <string name="content_description">for youtube thumbnail</string>
+</resources>
