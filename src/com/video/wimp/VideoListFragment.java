@@ -165,8 +165,7 @@ public class VideoListFragment extends SherlockFragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position,
                                     long arg3) {
                 // TODO Auto-generated method stub
-                HashMap<String, String> item = new HashMap<String, String>();
-                item = menuItems.get(position);
+                HashMap<String, String> item = menuItems.get(position);
 
                 mCallback.onVideoSelected(item.get("yid"));
 
