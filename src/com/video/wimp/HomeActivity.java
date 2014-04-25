@@ -1,14 +1,19 @@
 package com.video.wimp;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -23,7 +28,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 
 public class HomeActivity extends SherlockFragmentActivity
-        implements ActionBar.OnNavigationListener, VideoListFragment.OnVideoSelectedListener {
+        implements ActionBar.OnNavigationListener, VideoListFragment.OnVideoSelectedListener, SearchView.OnQueryTextListener{
 
     // create object of ActionBar and VideoListFragment
     VideoListFragment videoListFrag;
@@ -31,6 +36,12 @@ public class HomeActivity extends SherlockFragmentActivity
     private static final int menuItemIdRefresh = 10;
     private static final int menuItemIdRandom = 20;
     private static final int menuItemIdFav = 30;
+    private static final int menuItemIdSearch = 40;
+    MenuItem refreshItem;
+    MenuItem favItem;
+    MenuItem randomItem;
+    MenuItem searchItem;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +59,52 @@ public class HomeActivity extends SherlockFragmentActivity
                 .commit();
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Bundle b = videoListFrag.getArguments();
+        b.putString("searchedText",query);
+        searchView.clearFocus();
+        videoListFrag.btnSearch.performClick();
+
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
     // create option menu
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem refreshItem = menu.add(0, menuItemIdRefresh, 0,
+        searchView = new SearchView(getSupportActionBar().getThemedContext());
+        searchView.setQueryHint("Search for videos");
+        searchView.setOnQueryTextListener(this);
+
+        searchItem = menu.add(0, menuItemIdSearch, 0,
+                getString(R.string.search)).setShowAsActionFlags(
+                MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        searchItem.setIcon(R.drawable.abs__ic_search);
+        searchItem.setActionView(searchView);
+
+        /*searchItem = menu.add(0, menuItemIdSearch, 0, getString(R.string.search))
+                .setIcon(R.drawable.abs__ic_search)
+                .setActionView(searchView)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+*/
+        refreshItem = menu.add(0, menuItemIdRefresh, 0,
                 getString(R.string.refresh)).setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_ALWAYS);
+                MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         refreshItem.setIcon(R.drawable.ic_action_refresh);
-        MenuItem favItem = menu.add(0, menuItemIdFav, 0,
+        favItem = menu.add(0, menuItemIdFav, 0,
                 getString(R.string.my_favorite)).setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_ALWAYS);
+                MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         favItem.setIcon(R.drawable.ic_action_favorite);
-        MenuItem randomItem = menu.add(0, menuItemIdRandom, 0,
+        randomItem = menu.add(0, menuItemIdRandom, 0,
                 getString(R.string.random)).setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_ALWAYS);
+                MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         randomItem.setIcon(R.drawable.ic_action_shuffle);
 
-        getSupportMenuInflater().inflate(R.menu.favorite, menu);
+        getSupportMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
 
@@ -85,6 +126,11 @@ public class HomeActivity extends SherlockFragmentActivity
                 iRate.setData(Uri.parse(getString(R.string.gplay_url)));
                 startActivity(iRate);
                 return true;
+            case R.id.menuSetting:
+                // open setting page
+                Intent iSetting = new Intent(this, UserSettingActivity.class);
+                startActivity(iSetting);
+                return true;
             case menuItemIdFav:
                 // open favorite app page
                 Intent iMyFavorite = new Intent(this, MyFavoriteActivity.class);
@@ -92,10 +138,33 @@ public class HomeActivity extends SherlockFragmentActivity
                 return true;
             case menuItemIdRefresh:
                 //Refresh the list
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+                searchItem.collapseActionView();
                 videoListFrag.btnRefresh.performClick();
                 return true;
             case menuItemIdRandom:
-                new loadRandomVideoView().execute();
+                if(isAppInstalled("com.google.android.youtube")) {
+                    new loadRandomVideoView().execute();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(getString(R.string.no_youtube_app));
+                    builder.setCancelable(true);
+                    builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            // TODO Auto-generated method stub
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.youtube"));
+                            startActivity(intent);
+
+                            //Finish the activity so they can't circumvent the check
+                            finish();
+                        }
+
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -112,10 +181,37 @@ public class HomeActivity extends SherlockFragmentActivity
         // TODO Auto-generated method stub
 
         // call player page to play selected video
-        Intent i = new Intent(this, PlayerActivity.class);
-        i.putExtra("id", ID);
-        startActivity(i);
+        SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", true);
+        if(nativeYoutubeFlag){
+            if(isAppInstalled("com.google.android.youtube")) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
+                intent.putExtra("VIDEO_ID", ID);
+                startActivity(intent);
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getString(R.string.no_youtube_app));
+                builder.setCancelable(true);
+                builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
 
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.youtube"));
+                        startActivity(intent);
+
+                        //Finish the activity so they can't circumvent the check
+                        finish();
+                    }
+
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        }else{
+            Intent i = new Intent(this, PlayerActivity.class);
+            i.putExtra("id", ID);
+            startActivity(i);
+        }
     }
 
     // load random videos
@@ -147,10 +243,17 @@ public class HomeActivity extends SherlockFragmentActivity
                     str += line;
                 }
 
-                Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
-                i.putExtra("id", str);
-                startActivity(i);
-
+                SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", true);
+                if(nativeYoutubeFlag) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+str));
+                    intent.putExtra("VIDEO_ID", str);
+                    startActivity(intent);
+                } else {
+                    Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
+                    i.putExtra("id", str);
+                    startActivity(i);
+                }
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -172,4 +275,13 @@ public class HomeActivity extends SherlockFragmentActivity
         }
     }
 
+    protected boolean isAppInstalled(String packageName) {
+        Intent mIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+        if (mIntent != null) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

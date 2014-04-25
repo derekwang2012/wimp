@@ -47,8 +47,9 @@ public class VideoListFragment extends SherlockFragment {
     ProgressBar prgLoading;
     Button btnRefresh;
     Button btnLoadMore;
+    Button btnSearch;
     AdView ads;
-
+    TextView emptyVideoTextView;
     // create variable to get position, connection status, resources, and channel username
     int position;
     boolean isConnect = true;
@@ -125,6 +126,8 @@ public class VideoListFragment extends SherlockFragment {
         list = (ListView) v.findViewById(R.id.list);
         prgLoading = (ProgressBar) v.findViewById(R.id.prgLoading);
         btnRefresh = (Button) v.findViewById(R.id.btnRefresh);
+        btnSearch = (Button) v.findViewById(R.id.btnSearch);
+        emptyVideoTextView = (TextView) v.findViewById(R.id.emptySearchedVideoList);
         ads = (AdView) v.findViewById(R.id.ads);
 
         menuItems = new ArrayList<HashMap<String, String>>();
@@ -153,7 +156,10 @@ public class VideoListFragment extends SherlockFragment {
             public void onClick(View arg0) {
                 // Starting a new async task
                 isConnect = true;
-                new loadMoreListView().execute();
+                Bundle b = getArguments();
+                String searchedText = b.getString("searchedText");
+
+                new loadMoreListView().execute(searchedText);
             }
         });
 
@@ -185,6 +191,17 @@ public class VideoListFragment extends SherlockFragment {
                 new loadFirstListView().execute();
             }
         });
+        btnSearch.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                isConnect = true;
+                menuItems = new ArrayList<HashMap<String, String>>();
+                current_page = 0;
+                new loadSearchedVideoListView().execute();
+            }
+        });
         registerForContextMenu(list);
 
         return v;
@@ -205,6 +222,107 @@ public class VideoListFragment extends SherlockFragment {
         }
     }
 
+    // load searched 15 videos
+    private class loadSearchedVideoListView extends AsyncTask<Void, Void, Void> {
+        Bundle b = getArguments();
+        String searchedText = b.getString("searchedText");
+        @Override
+        protected void onPreExecute() {
+            // Showing progress dialog before sending http request
+            pDialog = new ProgressDialog(
+                    getActivity());
+            pDialog.setMessage("Searching " + searchedText + " ...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        protected Void doInBackground(Void... unused) {
+            try {
+
+                HttpClient client = new DefaultHttpClient();
+                HttpConnectionParams.setConnectionTimeout(client.getParams(), 15000);
+                HttpConnectionParams.setSoTimeout(client.getParams(), 15000);
+
+                // Perform a GET request to YouTube for a JSON list of all the videos by a specific user
+                HttpUriRequest request = new HttpGet("http://trucn.com/thisisfive.com/searchWimp.php?format=json&search=" + searchedText);
+                // Get the response that YouTube sends back
+                HttpResponse response = client.execute(request);
+                // Convert this response into an inputstream for the parser to use
+                InputStream atomInputStream = response.getEntity().getContent();
+
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(atomInputStream));
+
+                String line;
+                String str = "";
+                while ((line = in.readLine()) != null) {
+                    str += line;
+                }
+
+                JSONObject json = new JSONObject(str);
+                JSONArray items = json.getJSONArray("wimps");
+
+
+                for (int i = 0; i < items.length(); i++) {
+
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    JSONObject youtubeObject = items.getJSONObject(i);
+
+                    map.put(KEY_ID, youtubeObject.getString("yid"));
+                    map.put(KEY_TITLE, youtubeObject.getString("title").replace("&amp;", "&").replace("&quot;", "\""));
+                    map.put(KEY_THUMBNAIL, "https://i1.ytimg.com/vi/" + youtubeObject.getString("yid") + "/mqdefault.jpg");
+
+                    // adding HashList to ArrayList
+                    menuItems.add(map);
+                }
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                isConnect = false;
+                e.printStackTrace();
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return (null);
+        }
+
+        protected void onPostExecute(Void unused) {
+            // closing progress dialog
+            try {
+                pDialog.dismiss();
+                pDialog = null;
+            } catch (Exception e) {
+                // nothing
+            }
+
+            if (isAdded()) {
+                if (isConnect) {
+                    btnRefresh.setVisibility(View.GONE);
+                    // Getting adapter
+                    vla = new VideoListAdapter(getActivity(), menuItems);
+                    list.setAdapter(vla);
+
+                    //Here is the textView to show if the searched list is empty
+                    if(menuItems.size() > 0) {
+                        emptyVideoTextView.setVisibility(View.GONE);
+                        btnLoadMore.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyVideoTextView.setVisibility(View.VISIBLE);
+                        btnLoadMore.setVisibility(View.GONE);
+                    }
+
+                } else {
+                    btnRefresh.setVisibility(View.VISIBLE);
+                    Toast.makeText(getActivity(), getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
 
     // load first 10 videos
     private class loadFirstListView extends AsyncTask<Void, Void, Void> {
@@ -290,6 +408,14 @@ public class VideoListFragment extends SherlockFragment {
                     vla = new VideoListAdapter(getActivity(), menuItems);
                     list.setAdapter(vla);
 
+                    if(menuItems.size() > 0) {
+                        emptyVideoTextView.setVisibility(View.GONE);
+                        btnLoadMore.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyVideoTextView.setVisibility(View.VISIBLE);
+                        btnLoadMore.setVisibility(View.GONE);
+                    }
+
                 } else {
                     btnRefresh.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
@@ -299,7 +425,7 @@ public class VideoListFragment extends SherlockFragment {
     }
 
     // load more videos
-    private class loadMoreListView extends AsyncTask<Void, Void, Void> {
+    private class loadMoreListView extends AsyncTask<String, String, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -312,15 +438,17 @@ public class VideoListFragment extends SherlockFragment {
             pDialog.show();
         }
 
-
-        protected Void doInBackground(Void... unused) {
+        protected Void doInBackground(String... params) {
 
             // store previous value of current page
             previous_page = current_page;
             // increment current page
             current_page += 15;
-
             YOUTUBE_API = "http://trucn.com/thisisfive.com/showWimp.php?format=json&offset=" + current_page;
+            String searchedText = params[0];
+            if(searchedText.trim().length() > 0) {
+                YOUTUBE_API = "http://trucn.com/thisisfive.com/searchWimp.php?format=json&search=" + searchedText + "&offset=" + current_page;
+            }
 
             try {
 

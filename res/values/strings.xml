@@ -24,14 +24,21 @@
     <string name="player">Player</string>
 
     <string name="refresh">Refresh</string>
+    <string name="search">Search</string>
     <string name="no_connection">Connect to internet failed</string>
     <string name="my_favorite">Favorites</string>
     <string name="share_it">Share it</string>
-    <string name="random">Random Video</string>
+    <string name="random">Random</string>
     <string name="rate_it">Rate me</string>
     <string name="about">About</string>
+    <string name="setting">Setting</string>
+    <string name="setting_play_youtube">Play Video</string>
+    <string name="setting_play_youtube_summary">using native Youtube app</string>
     <string name="subject">Daily best videos in one app</string>
     <string name="message">Download daily best videos app now on Google Play:</string>
+    <string name="empty_searched_video_message">
+        <b>No Videos</b>
+    </string>
     <string name="empty_fav_list_message">
         <b>No Videos</b>
         \n\nTo add videos to the favorite section, long press on the video, and then tap "Add to Favorite".

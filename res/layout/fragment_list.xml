@@ -13,7 +13,13 @@
         android:divider="@android:color/background_light"
         android:layout_alignParentTop="true"
 		android:layout_above="@+id/ads"/>
-
+    <TextView android:id="@+id/emptySearchedVideoList"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:visibility="invisible"
+              android:gravity="center_horizontal"
+              android:padding="10dp"
+              android:text="@string/empty_searched_video_message" />
     <com.google.ads.AdView
 		xmlns:googleads="http://schemas.android.com/apk/lib/com.google.ads"
 	    android:id="@+id/ads"
@@ -33,5 +39,14 @@
         android:background="@drawable/btn_default_holo_light"
         android:layout_centerInParent="true"
         android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/content_size"
+        android:background="@drawable/btn_default_holo_light"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
         
 </RelativeLayout>

@@ -1,8 +1,12 @@
 package com.video.wimp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -14,8 +18,6 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
     // create object of ActionBar and VideoListFragment
     MyFavoriteListFragment videoListFrag;
     ActionBar actionbar;
-
-    //private static final int menuItemIdShare = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +40,6 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
 
     // create option menu
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*MenuItem shareItem = menu.add(0, menuItemIdShare, 0,
-                getString(R.string.share_it)).setShowAsActionFlags(
-                MenuItem.SHOW_AS_ACTION_ALWAYS);
-        shareItem.setIcon(R.drawable.ic_action_share);*/
-
         getSupportMenuInflater().inflate(R.menu.favorite, menu);
         return true;
     }
@@ -65,6 +62,11 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
                 iRate.setData(Uri.parse(getString(R.string.gplay_url)));
                 startActivity(iRate);
                 return true;
+            case R.id.menuSetting:
+                // open setting page
+                Intent iSetting = new Intent(this, UserSettingActivity.class);
+                startActivity(iSetting);
+                return true;
             case android.R.id.home:
                 // back to previous page
                 finish();
@@ -82,12 +84,48 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
     @Override
     public void onVideoSelected(String ID) {
         // TODO Auto-generated method stub
+        SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", true);
+        if(nativeYoutubeFlag){
+            if(isAppInstalled("com.google.android.youtube")) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
+                intent.putExtra("VIDEO_ID", ID);
+                startActivity(intent);
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getString(R.string.no_youtube_app));
+                builder.setCancelable(true);
+                builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
 
-        // call player page to play selected video
-        Intent i = new Intent(this, PlayerActivity.class);
-        i.putExtra("id", ID);
-        startActivity(i);
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.youtube"));
+                        startActivity(intent);
 
+                        //Finish the activity so they can't circumvent the check
+                        finish();
+                    }
+
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        }else{
+            // call player page to play selected video
+            Intent i = new Intent(this, PlayerActivity.class);
+            i.putExtra("id", ID);
+            startActivity(i);
+        }
+    }
+
+    protected boolean isAppInstalled(String packageName) {
+        Intent mIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+        if (mIntent != null) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
 }
