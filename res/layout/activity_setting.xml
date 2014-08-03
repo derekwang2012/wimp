@@ -6,6 +6,6 @@
             android:key="pref_play_youtube"
             android:title="@string/setting_play_youtube"
             android:summary="@string/setting_play_youtube_summary"
-            android:defaultValue="true" />
+            android:defaultValue="false" />
 
 </PreferenceScreen>

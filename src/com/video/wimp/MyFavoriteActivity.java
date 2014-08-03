@@ -62,11 +62,11 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
                 iRate.setData(Uri.parse(getString(R.string.gplay_url)));
                 startActivity(iRate);
                 return true;
-            case R.id.menuSetting:
+            /*case R.id.menuSetting:
                 // open setting page
                 Intent iSetting = new Intent(this, UserSettingActivity.class);
                 startActivity(iSetting);
-                return true;
+                return true;*/
             case android.R.id.home:
                 // back to previous page
                 finish();
@@ -85,36 +85,32 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
     public void onVideoSelected(String ID) {
         // TODO Auto-generated method stub
         SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", true);
-        if(nativeYoutubeFlag){
-            if(isAppInstalled("com.google.android.youtube")) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
-                intent.putExtra("VIDEO_ID", ID);
-                startActivity(intent);
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.no_youtube_app));
-                builder.setCancelable(true);
-                builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
+        boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", false);
 
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.youtube"));
-                        startActivity(intent);
+        if(isAppInstalled("com.google.android.youtube")) {
+            /*Intent intent = YouTubeStandalonePlayer.createVideoIntent(this, getString(R.string.youtube_apikey), ID, 0, true, true);
+            startActivity(intent);*/
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
+            intent.putExtra("VIDEO_ID", ID);
+            startActivity(intent);
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getString(R.string.no_youtube_app));
+            builder.setCancelable(true);
+            builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
 
-                        //Finish the activity so they can't circumvent the check
-                        finish();
-                    }
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.youtube"));
+                    startActivity(intent);
 
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        }else{
-            // call player page to play selected video
-            Intent i = new Intent(this, PlayerActivity.class);
-            i.putExtra("id", ID);
-            startActivity(i);
+                    //Finish the activity so they can't circumvent the check
+                    finish();
+                }
+
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 

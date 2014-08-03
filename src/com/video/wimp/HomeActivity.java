@@ -86,11 +86,6 @@ public class HomeActivity extends SherlockFragmentActivity
         searchItem.setIcon(R.drawable.abs__ic_search);
         searchItem.setActionView(searchView);
 
-        /*searchItem = menu.add(0, menuItemIdSearch, 0, getString(R.string.search))
-                .setIcon(R.drawable.abs__ic_search)
-                .setActionView(searchView)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-*/
         refreshItem = menu.add(0, menuItemIdRefresh, 0,
                 getString(R.string.refresh)).setShowAsActionFlags(
                 MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
@@ -126,11 +121,11 @@ public class HomeActivity extends SherlockFragmentActivity
                 iRate.setData(Uri.parse(getString(R.string.gplay_url)));
                 startActivity(iRate);
                 return true;
-            case R.id.menuSetting:
+            /*case R.id.menuSetting:
                 // open setting page
                 Intent iSetting = new Intent(this, UserSettingActivity.class);
                 startActivity(iSetting);
-                return true;
+                return true;*/
             case menuItemIdFav:
                 // open favorite app page
                 Intent iMyFavorite = new Intent(this, MyFavoriteActivity.class);
@@ -182,35 +177,30 @@ public class HomeActivity extends SherlockFragmentActivity
 
         // call player page to play selected video
         SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", true);
-        if(nativeYoutubeFlag){
-            if(isAppInstalled("com.google.android.youtube")) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
-                intent.putExtra("VIDEO_ID", ID);
-                startActivity(intent);
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.no_youtube_app));
-                builder.setCancelable(true);
-                builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
+        boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", false);
 
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.youtube"));
-                        startActivity(intent);
+        if(isAppInstalled("com.google.android.youtube")) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
+            intent.putExtra("VIDEO_ID", ID);
+            startActivity(intent);
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getString(R.string.no_youtube_app));
+            builder.setCancelable(true);
+            builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
 
-                        //Finish the activity so they can't circumvent the check
-                        finish();
-                    }
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.youtube"));
+                    startActivity(intent);
 
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        }else{
-            Intent i = new Intent(this, PlayerActivity.class);
-            i.putExtra("id", ID);
-            startActivity(i);
+                    //Finish the activity so they can't circumvent the check
+                    finish();
+                }
+
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 
@@ -244,15 +234,13 @@ public class HomeActivity extends SherlockFragmentActivity
                 }
 
                 SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", true);
+                boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", false);
                 if(nativeYoutubeFlag) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+str));
                     intent.putExtra("VIDEO_ID", str);
                     startActivity(intent);
                 } else {
-                    Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
-                    i.putExtra("id", str);
-                    startActivity(i);
+                    startRandomVideo(str);
                 }
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
@@ -283,5 +271,11 @@ public class HomeActivity extends SherlockFragmentActivity
         else {
             return false;
         }
+    }
+
+    public void startRandomVideo(String vid) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+vid));
+        intent.putExtra("VIDEO_ID", vid);
+        startActivity(intent);
     }
 }

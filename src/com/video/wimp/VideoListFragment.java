@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -106,8 +107,6 @@ public class VideoListFragment extends SherlockFragment {
         } else if (item.getTitle().equals("Add to Favorite")) {
             // Add to sqlite
             //db.deleteAll();
-            // Inserting Contacts
-            //Log.d("Insert: ", "Inserting ..");
             db.addYoutube(new Youtube(yid, title, null));
             Toast.makeText(getActivity(), getString(R.string.favorite_added), Toast.LENGTH_LONG).show();
         }
@@ -243,7 +242,7 @@ public class VideoListFragment extends SherlockFragment {
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 15000);
                 HttpConnectionParams.setSoTimeout(client.getParams(), 15000);
-
+                searchedText = URLEncoder.encode(searchedText, "UTF-8");
                 // Perform a GET request to YouTube for a JSON list of all the videos by a specific user
                 HttpUriRequest request = new HttpGet("http://trucn.com/thisisfive.com/searchWimp.php?format=json&search=" + searchedText);
                 // Get the response that YouTube sends back
@@ -340,6 +339,9 @@ public class VideoListFragment extends SherlockFragment {
 
         protected Void doInBackground(Void... unused) {
             try {
+                // Reset searchText to empty
+                Bundle b = getArguments();
+                b.putString("searchedText","");
 
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 15000);
@@ -446,11 +448,12 @@ public class VideoListFragment extends SherlockFragment {
             current_page += 15;
             YOUTUBE_API = "http://trucn.com/thisisfive.com/showWimp.php?format=json&offset=" + current_page;
             String searchedText = params[0];
-            if(searchedText.trim().length() > 0) {
-                YOUTUBE_API = "http://trucn.com/thisisfive.com/searchWimp.php?format=json&search=" + searchedText + "&offset=" + current_page;
-            }
 
             try {
+                if(searchedText!= null && searchedText.trim().length() > 0) {
+                    searchedText = URLEncoder.encode(searchedText, "UTF-8");
+                    YOUTUBE_API = "http://trucn.com/thisisfive.com/searchWimp.php?format=json&search=" + searchedText + "&offset=" + current_page;
+                }
 
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 15000);
