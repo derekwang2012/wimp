@@ -92,6 +92,7 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
             startActivity(intent);*/
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
             intent.putExtra("VIDEO_ID", ID);
+            intent.putExtra("force_fullscreen",false);
             startActivity(intent);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

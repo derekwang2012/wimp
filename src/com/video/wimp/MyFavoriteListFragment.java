@@ -16,6 +16,8 @@ import com.video.wimp.ads.Ads;
 import com.video.wimp.util.DatabaseHandler;
 import com.video.wimp.util.Youtube;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,6 @@ import java.util.List;
 public class MyFavoriteListFragment extends SherlockFragment {
 
     OnVideoSelectedListener mCallback;
-
 
     // create object of views
     ListView list;
@@ -43,10 +44,15 @@ public class MyFavoriteListFragment extends SherlockFragment {
     ArrayList<HashMap<String, String>> videoItems;
     ProgressDialog pDialog;
 
+    SimpleDateFormat createDateOldFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    SimpleDateFormat createDateNewFormatter = new SimpleDateFormat("MMM dd, yyyy");
+
+
     // flag for current page
     static final String KEY_ID = "yid";
     static final String KEY_TITLE = "title";
     static final String KEY_THUMBNAIL = "thumbnail";
+    static final String KEY_CREATE_DATE = "create_date";
 
     // create interface listener
     public interface OnVideoSelectedListener{
@@ -174,12 +180,18 @@ public class MyFavoriteListFragment extends SherlockFragment {
             DatabaseHandler db = new DatabaseHandler(getActivity());
 
             List<Youtube> youtubeList = db.getAllYoutubesOrderByCreateDate();
-            for(Youtube youtube : youtubeList) {
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put(KEY_ID, youtube.getYid());
-                map.put(KEY_TITLE, youtube.getTitle());
-                map.put(KEY_THUMBNAIL, "https://i1.ytimg.com/vi/"+youtube.getYid()+"/mqdefault.jpg");
-                videoItems.add(map);
+            try {
+                for(Youtube youtube : youtubeList) {
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put(KEY_ID, youtube.getYid());
+                    map.put(KEY_TITLE, youtube.getTitle());
+                    map.put(KEY_THUMBNAIL, "http://img.youtube.com/vi/"+youtube.getYid()+"/hqdefault.jpg");
+                    map.put(KEY_CREATE_DATE, createDateNewFormatter.format(createDateOldFormatter.parse(youtube.getCreateDate())));
+                    videoItems.add(map);
+                }
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
 
             return (null);

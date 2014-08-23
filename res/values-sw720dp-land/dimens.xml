@@ -7,9 +7,10 @@
     <dimen name="activity_horizontal_margin">128dp</dimen>
  	<dimen name="margin">10dp</dimen>
     <dimen name="padding">10dp</dimen>
-    <dimen name="image_height">170dp</dimen>
+    <dimen name="image_height">180dp</dimen>
     <dimen name="content_size">16sp</dimen>
     <dimen name="title_size">20sp</dimen>
+    <dimen name="date_size">16dp</dimen>
     <dimen name="splash_padding">40dp</dimen>
     <dimen name="progressbar_width">210dp</dimen>
     <dimen name="about_margin">20dp</dimen>

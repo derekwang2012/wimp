@@ -182,6 +182,7 @@ public class HomeActivity extends SherlockFragmentActivity
         if(isAppInstalled("com.google.android.youtube")) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
             intent.putExtra("VIDEO_ID", ID);
+            intent.putExtra("force_fullscreen",false);
             startActivity(intent);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -238,6 +239,7 @@ public class HomeActivity extends SherlockFragmentActivity
                 if(nativeYoutubeFlag) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+str));
                     intent.putExtra("VIDEO_ID", str);
+                    intent.putExtra("force_fullscreen",false);
                     startActivity(intent);
                 } else {
                     startRandomVideo(str);
@@ -276,6 +278,7 @@ public class HomeActivity extends SherlockFragmentActivity
     public void startRandomVideo(String vid) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+vid));
         intent.putExtra("VIDEO_ID", vid);
+        intent.putExtra("force_fullscreen",false);
         startActivity(intent);
     }
 }

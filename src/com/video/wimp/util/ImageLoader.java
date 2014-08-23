@@ -100,7 +100,7 @@ public class ImageLoader {
                     break;
                 width_tmp/=2;
                 height_tmp/=2;
-                scale*=2;
+                scale*=1;
             }
             
             //decode with inSampleSize

@@ -58,16 +58,14 @@ public class VideoListAdapter extends BaseAdapter {
 				// connect views object and views id on xml
 				ImageView imgThumbnail = (ImageView) vi.findViewById(R.id.imgThumbnail);
 				TextView txtTitle = (TextView) vi.findViewById(R.id.txtTitle);
-				//TextView txtDuration = (TextView) vi.findViewById(R.id.txtDuration);
-                //TextView txtDateCategory = (TextView) vi.findViewById(R.id.txtDateCategory);
+                TextView txtCreateDate = (TextView) vi.findViewById(R.id.txtCreateDate);
+
 				
-				HashMap<String, String> item = new HashMap<String, String>();
-		        item = data.get(position);
+				HashMap<String, String> item = data.get(position);
 
 				// set data to textview and imageview
 		        txtTitle.setText(item.get("title"));
-		        /*txtDuration.setText(item.get("duration"));
-                txtDateCategory.setText(item.get("date_category"));*/
+                txtCreateDate.setText(item.get("create_date"));
 			
 		        imageLoader.DisplayImage(item.get("thumbnail"), imgThumbnail);
 			

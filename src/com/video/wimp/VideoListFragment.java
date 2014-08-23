@@ -33,6 +33,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,7 +44,8 @@ public class VideoListFragment extends SherlockFragment {
 
     // create string variables
     private String YOUTUBE_API = "http://trucn.com/thisisfive.com/showWimp.php?format=json";
-
+    SimpleDateFormat createDateOldFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat createDateNewFormatter = new SimpleDateFormat("MMM dd, yyyy");
     // create object of views
     ListView list;
     ProgressBar prgLoading;
@@ -69,6 +72,7 @@ public class VideoListFragment extends SherlockFragment {
     static final String KEY_ID = "yid";
     static final String KEY_TITLE = "title";
     static final String KEY_THUMBNAIL = "thumbnail";
+    static final String KEY_CREATE_DATE = "create_date";
 
     // create interface listener
     public interface OnVideoSelectedListener {
@@ -270,7 +274,8 @@ public class VideoListFragment extends SherlockFragment {
 
                     map.put(KEY_ID, youtubeObject.getString("yid"));
                     map.put(KEY_TITLE, youtubeObject.getString("title").replace("&amp;", "&").replace("&quot;", "\""));
-                    map.put(KEY_THUMBNAIL, "https://i1.ytimg.com/vi/" + youtubeObject.getString("yid") + "/mqdefault.jpg");
+                    map.put(KEY_CREATE_DATE, createDateNewFormatter.format(createDateOldFormatter.parse(youtubeObject.getString("create_date"))));
+                    map.put(KEY_THUMBNAIL, "http://img.youtube.com/vi/" + youtubeObject.getString("yid") + "/hqdefault.jpg");
 
                     // adding HashList to ArrayList
                     menuItems.add(map);
@@ -284,6 +289,9 @@ public class VideoListFragment extends SherlockFragment {
                 isConnect = false;
                 e.printStackTrace();
             } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -374,7 +382,8 @@ public class VideoListFragment extends SherlockFragment {
 
                     map.put(KEY_ID, youtubeObject.getString("yid"));
                     map.put(KEY_TITLE, youtubeObject.getString("title").replace("&amp;", "&").replace("&quot;", "\""));
-                    map.put(KEY_THUMBNAIL, "https://i1.ytimg.com/vi/" + youtubeObject.getString("yid") + "/mqdefault.jpg");
+                    map.put(KEY_CREATE_DATE, createDateNewFormatter.format(createDateOldFormatter.parse(youtubeObject.getString("create_date"))));
+                    map.put(KEY_THUMBNAIL, "http://img.youtube.com/vi/" + youtubeObject.getString("yid") + "/hqdefault.jpg");
 
                     // adding HashList to ArrayList
                     menuItems.add(map);
@@ -388,6 +397,9 @@ public class VideoListFragment extends SherlockFragment {
                 isConnect = false;
                 e.printStackTrace();
             } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -484,7 +496,8 @@ public class VideoListFragment extends SherlockFragment {
 
                     map.put(KEY_ID, youtubeObject.getString("yid"));
                     map.put(KEY_TITLE, youtubeObject.getString("title").replace("&amp;", "&").replace("&quot;", "\""));
-                    map.put(KEY_THUMBNAIL, "https://i1.ytimg.com/vi/" + youtubeObject.getString("yid") + "/mqdefault.jpg");
+                    map.put(KEY_CREATE_DATE, createDateNewFormatter.format(createDateOldFormatter.parse(youtubeObject.getString("create_date"))));
+                    map.put(KEY_THUMBNAIL, "http://img.youtube.com/vi/" + youtubeObject.getString("yid") + "/hqdefault.jpg");
 
 
                     // adding HashList to ArrayList
@@ -498,6 +511,9 @@ public class VideoListFragment extends SherlockFragment {
                 isConnect = false;
                 e.printStackTrace();
             } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
