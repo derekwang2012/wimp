@@ -121,11 +121,11 @@ public class HomeActivity extends SherlockFragmentActivity
                 iRate.setData(Uri.parse(getString(R.string.gplay_url)));
                 startActivity(iRate);
                 return true;
-            /*case R.id.menuSetting:
+            case R.id.menuSetting:
                 // open setting page
                 Intent iSetting = new Intent(this, UserSettingActivity.class);
                 startActivity(iSetting);
-                return true;*/
+                return true;
             case menuItemIdFav:
                 // open favorite app page
                 Intent iMyFavorite = new Intent(this, MyFavoriteActivity.class);
@@ -182,7 +182,10 @@ public class HomeActivity extends SherlockFragmentActivity
         if(isAppInstalled("com.google.android.youtube")) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
             intent.putExtra("VIDEO_ID", ID);
-            intent.putExtra("force_fullscreen",false);
+            if(nativeYoutubeFlag)
+                intent.putExtra("force_fullscreen",false);
+            else
+                intent.putExtra("force_fullscreen",true);
             startActivity(intent);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -236,14 +239,14 @@ public class HomeActivity extends SherlockFragmentActivity
 
                 SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", false);
-                if(nativeYoutubeFlag) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+str));
-                    intent.putExtra("VIDEO_ID", str);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+str));
+                intent.putExtra("VIDEO_ID", str);
+                if(nativeYoutubeFlag)
                     intent.putExtra("force_fullscreen",false);
-                    startActivity(intent);
-                } else {
-                    startRandomVideo(str);
-                }
+                else
+                    intent.putExtra("force_fullscreen",true);
+                startActivity(intent);
+
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -273,12 +276,5 @@ public class HomeActivity extends SherlockFragmentActivity
         else {
             return false;
         }
-    }
-
-    public void startRandomVideo(String vid) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+vid));
-        intent.putExtra("VIDEO_ID", vid);
-        intent.putExtra("force_fullscreen",false);
-        startActivity(intent);
     }
 }

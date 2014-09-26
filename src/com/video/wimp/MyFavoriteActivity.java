@@ -62,11 +62,11 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
                 iRate.setData(Uri.parse(getString(R.string.gplay_url)));
                 startActivity(iRate);
                 return true;
-            /*case R.id.menuSetting:
+            case R.id.menuSetting:
                 // open setting page
                 Intent iSetting = new Intent(this, UserSettingActivity.class);
                 startActivity(iSetting);
-                return true;*/
+                return true;
             case android.R.id.home:
                 // back to previous page
                 finish();
@@ -88,11 +88,12 @@ public class MyFavoriteActivity extends SherlockFragmentActivity
         boolean nativeYoutubeFlag = setting.getBoolean("pref_play_youtube", false);
 
         if(isAppInstalled("com.google.android.youtube")) {
-            /*Intent intent = YouTubeStandalonePlayer.createVideoIntent(this, getString(R.string.youtube_apikey), ID, 0, true, true);
-            startActivity(intent);*/
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+ID));
             intent.putExtra("VIDEO_ID", ID);
-            intent.putExtra("force_fullscreen",false);
+            if(nativeYoutubeFlag)
+                intent.putExtra("force_fullscreen",false);
+            else
+                intent.putExtra("force_fullscreen",true);
             startActivity(intent);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
